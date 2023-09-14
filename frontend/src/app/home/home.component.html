@@ -1,0 +1,9 @@
+<main>
+  <div class="url-input">
+    <input type="url" [formControl]="url" />
+    <select [formControl]="format">
+      <option *ngFor="let opt of availableFormats">{{opt}}</option>
+    </select>
+    <button (click)="convert()">convert</button>
+  </div>
+</main>
