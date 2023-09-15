@@ -1,4 +1,5 @@
-import { Component } from '@angular/core';
+import { HttpErrorResponse } from '@angular/common/http';
+import { Component, signal } from '@angular/core';
 import { FormControl, Validators } from '@angular/forms';
 import { DownloadService } from 'src/services/download.service';
 
@@ -8,17 +9,20 @@ import { DownloadService } from 'src/services/download.service';
   styleUrls: ['./home.component.css']
 })
 export class HomeComponent {
-  // availableFormats:string[] = ['mp3','wav','mp4'];
-  availableFormats:string[] = ['mp3'];
-  format = new FormControl('mp3');
+  availableFormats:string[] = ['mp3','wav'];
+  formatSelected:string = this.availableFormats[0];
   url = new FormControl('');
+  error = signal<string|undefined>(undefined);
+  isLoading = signal<boolean>(false);
 
   constructor(private service:DownloadService){}
 
   convert():void{
-    this.service.download(this.url.value!,this.format.value!).subscribe({
+    this.error.set(undefined);
+    this.isLoading.set(true);
+    this.service.download(this.url.value!,this.formatSelected).subscribe({
       next:(data:any) => {
-        const fileName:string = `converted.${this.format.value!}`;
+        const fileName:string = `converted.${this.formatSelected}`;
         const file:Blob = data.body as Blob;
         const url:string = window.URL.createObjectURL(file);
         const a = document.createElement('a');
@@ -26,6 +30,12 @@ export class HomeComponent {
         a.download = fileName;
         a.href = url;
         a.click();
+        this.isLoading.set(false);
+      },
+      error:(res:HttpErrorResponse) => {
+        if(res.status == 400)
+          this.error.set("URL invalida")
+        this.isLoading.set(false);
       }
     });
   }

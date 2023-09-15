@@ -11,9 +11,15 @@ export class DownloadService {
   constructor(private backend:HttpClient) {}
 
   public download(url:string,format:string):Observable<any>{
-      return this.backend.get(`${this.backendURL}/download?url=${url}&format=${format}`,{
-        observe:'response',
-        responseType:'blob'
-      });
+    // if(format === 'mp4')
+    //   return this.backend.get(`${this.backendURL}/download/video?url=${url}`,{
+    //     observe:'response',
+    //     responseType:'blob'
+    //   });
+    // else
+    return this.backend.get(`${this.backendURL}/download?url=${url}&format=${format}`,{
+      observe:'response',
+      responseType:'blob'
+    });
   }
 }

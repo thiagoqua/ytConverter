@@ -1,9 +1,25 @@
 <main>
   <div class="url-input">
-    <input type="url" [formControl]="url" />
-    <select [formControl]="format">
-      <option *ngFor="let opt of availableFormats">{{opt}}</option>
-    </select>
-    <button (click)="convert()">convert</button>
+    <input type="url" [formControl]="url" placeholder="YouTube URL" />
+    <button *ngIf="!isLoading()" (click)="convert()" class="comic-button">
+      convert
+    </button>
+    <span *ngIf="isLoading()" class="loader"></span>
+  </div>
+  <div class="formats">
+    <h1
+      class="format"
+      *ngFor="let format of availableFormats"
+      (click)="formatSelected = format"
+      [ngClass]="{
+        'format-active': format == formatSelected,
+        'format-deactive': format != formatSelected
+      }"
+    >
+      {{ format.toUpperCase() }}
+    </h1>
+  </div>
+  <div class="messages">
+    <h1 class="error-msg" *ngIf="error()">{{ error() }}</h1>
   </div>
 </main>
