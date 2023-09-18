@@ -5,13 +5,20 @@ import cors from "cors";
 const app = express();
 const PORT = process.env.PORT ?? 8080;
 
-// for production only. REMOVE IT in local
-const corsOptions = {
-  origin:'https://youtconverter.netlify.app/',
-  optionsSuccessStatus:200
-}
+app.use(cors({
+  origin:(origin,callback) => {
+    const ACCEPTED_ORIGINS = [
+      'http://localhost:4200',
+      'https://youtconverter.netlify.app',
+      'https://youtconverter.netlify.app/'
+    ]
 
-app.use(cors(corsOptions));
+    if(ACCEPTED_ORIGINS.includes(origin))
+      return callback(null,true);
+
+    return callback(new Error('NOT ALLOWED BY CORS'));
+  }
+}));
 app.use('/download',downloadRouter);
 
 app.listen(PORT,() => {
