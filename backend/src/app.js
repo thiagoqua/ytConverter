@@ -3,7 +3,7 @@ import { downloadRouter } from "./routes/download.js";
 import cors from "cors";
 
 const app = express();
-const PORT = process.env.PORT ?? 1414;
+const PORT = process.env.PORT ?? 8080;
 
 app.use(cors());
 app.use('/download',downloadRouter);

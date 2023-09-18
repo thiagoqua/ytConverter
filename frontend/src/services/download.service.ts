@@ -7,7 +7,7 @@ import { Observable } from 'rxjs';
 })
 export class DownloadService {  
   //URL for local front and back
-  private backendURL:string = "http://localhost:3030";
+  private backendURL:string = "http://localhost:8080";
   // private backendURL:string = "http://localhost:1616";
   // private backendURL:string = "http://localhost:1616";
 

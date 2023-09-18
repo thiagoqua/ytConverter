@@ -1,5 +1,5 @@
 # App Overview
-Welcome to our **YouTube-to-Audio converter**, an intuitive web application built using Angular. This platform provides an intuitive solution for users aiming to extract high-quality audio from their favorite YouTube videos. With a simple design, our application ensures fast conversions and is optimized for use across various devices. We prioritize both audio quality and user data security, ensuring efficient processing without storing any user data post-conversion.
+Welcome to our **YouTube-to-Audio converter**, a web application built using Angular and Express. This platform provides an intuitive solution for users aiming to extract high-quality audio from their favorite YouTube videos. With a simple design, our application ensures fast conversions and is optimized for use across various devices. We prioritize both audio quality and user data security, ensuring efficient processing without storing any user data post-conversion.
 <br/>
 
 # Supported Formats for Download
@@ -17,7 +17,7 @@ While the Docker container provides an environment for downloading in WAV format
 
 # Running the backend locally with Docker
 1. Go to the backend dir and build the container: `docker build . -t backend:test`.
-2. Run the container: `docker run -p 3030:1414 --name backend -d backend:test`
+2. Run the container: `docker run -p 8080:8080 --name backend -d backend:test`
 
 # Running the frontend locally with Node
 1. Go to the frontend dir and install the node dependencies: `npm install`

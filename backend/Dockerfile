@@ -3,5 +3,5 @@ RUN apk update && apk add ffmpeg
 WORKDIR /usr/src/app
 COPY . .
 RUN npm install
-EXPOSE 1414
+EXPOSE 8080
 CMD ["npm","start"]
