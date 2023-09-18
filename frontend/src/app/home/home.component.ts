@@ -39,4 +39,8 @@ export class HomeComponent {
       }
     });
   }
+
+  goToPortfolio(){
+    window.location.href = "http://thiagoqua.ar";
+  }
 }

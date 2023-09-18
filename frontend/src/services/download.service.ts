@@ -8,7 +8,8 @@ import { Observable } from 'rxjs';
 export class DownloadService {  
   //URL for local front and back
   private backendURL:string = "http://localhost:8080";
-  // private backendURL:string = "http://localhost:1616";
+  //URL for hosted backend
+  // private backendURL:string = "https://ytconverter-nf4l-dev.fl0.io";
   // private backendURL:string = "http://localhost:1616";
 
   constructor(private backend:HttpClient) {}
