@@ -6,17 +6,14 @@ import { Observable } from 'rxjs';
   providedIn: 'root'
 })
 export class DownloadService {  
-  private backendURL:string = "http://localhost:1616";
+  //URL for local front and back
+  private backendURL:string = "http://localhost:3030";
+  // private backendURL:string = "http://localhost:1616";
+  // private backendURL:string = "http://localhost:1616";
 
   constructor(private backend:HttpClient) {}
 
   public download(url:string,format:string):Observable<any>{
-    // if(format === 'mp4')
-    //   return this.backend.get(`${this.backendURL}/download/video?url=${url}`,{
-    //     observe:'response',
-    //     responseType:'blob'
-    //   });
-    // else
     return this.backend.get(`${this.backendURL}/download?url=${url}&format=${format}`,{
       observe:'response',
       responseType:'blob'
