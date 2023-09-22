@@ -17,7 +17,8 @@ app.use(cors({
       return callback(null,true);
 
     return callback(new Error('NOT ALLOWED BY CORS'));
-  }
+  },
+  exposedHeaders: "Content-Disposition"
 }));
 app.use('/download',downloadRouter);
 

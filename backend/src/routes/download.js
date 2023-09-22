@@ -1,46 +1,40 @@
 import { Router } from "express";
 import ytdl from "ytdl-core";
 import ffmpeg from "fluent-ffmpeg";
+import getEncodedFilename from "../utils/URLhelper.js";
+import { ensureValidParams } from "../utils/paramsValidator.js";
 
 export const downloadRouter = Router();
 
 downloadRouter.get("/", async (req, res) => {
-  const url = req.query.url;
-  const format = req.query.format?.toLowerCase() || "mp3";
+  const {url,format,quality} = req.query;
+  try{
+    ensureValidParams(url,format,quality);
 
-  if (!url) 
-    return res.status(400).json({ message: "Bad Youtube URL" }).send();
-
-  if (!ytdl.validateURL(url))
-    return res.status(400).json({ message: "Bad Youtube URL" }).send();
-
-  if (format !== "wav" && format !== "mp3")
-    return res.status(400).json({ message: "Bad format" }).send();
-
-  res.header("Content-Disposition", `attachment;filename=converted.${format}`);
-
-  if (format == "wav") {
+    const videoTitle = await ytdl.getBasicInfo(url);
+    const fileName = getEncodedFilename(`${videoTitle.videoDetails.title}.${format}`);
     const stream = await ytdl(url, {
       filter: "audioonly",
       quality: "highestaudio",
     });
 
+    res.header("Content-Disposition", `attachment;filename=${fileName}`);
+
+    // bajo -> 96 kbps
+    // medio -> 160 kbps
+    // alto -> 296 kbps
     ffmpeg()
-      .input(stream)
-      .audioBitrate(296)
-      .toFormat(format)
-      .on("error", (err) => {
-        console.log(err);
-        if (!res.headersSent)
-          res.status(500).send("Server encountered an error.");
-        else res.end();
-      })
-      .pipe(res, { end: true });
-  } else {
-    await ytdl(url, {
-      filter: "audioonly",
-      format: format,
-      quality: "highestaudio",
-    }).pipe(res);
+    .input(stream)
+    .audioBitrate(296)
+    .toFormat(format)
+    .on("error", (err) => {
+      console.log(err);
+      if (!res.headersSent)
+        res.status(500).send("Server encountered an error.");
+      else res.end();
+    })
+    .pipe(res, { end: true });
+  } catch(err){
+    res.status(400).json({ message: err.message }).send();
   }
 });

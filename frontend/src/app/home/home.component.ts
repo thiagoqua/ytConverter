@@ -21,9 +21,11 @@ export class HomeComponent {
     this.error.set(undefined);
     this.isLoading.set(true);
     this.service.download(this.url.value!,this.formatSelected).subscribe({
-      next:(data:any) => {
-        const fileName:string = `converted.${this.formatSelected}`;
-        const file:Blob = data.body as Blob;
+      next:(res:any) => {
+        const fileName = decodeURIComponent(
+          res.headers.get('content-disposition')?.split(';')[1].split('=')[1]
+        );
+        const file:Blob = res.body as Blob;
         const url:string = window.URL.createObjectURL(file);
         const a = document.createElement('a');
 

@@ -1,16 +1,13 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
+import { environment } from 'src/environments/environment';
 
 @Injectable({
   providedIn: 'root'
 })
-export class DownloadService {  
-  //URL for local front and back
-  private backendURL:string = "http://localhost:8080";
-  //URL for hosted backend
-  // private backendURL:string = "https://ytconverter-nf4l-dev.fl0.io";
-  // private backendURL:string = "http://localhost:1616";
+export class DownloadService {
+  private backendURL:string = environment.backendUrl;
 
   constructor(private backend:HttpClient) {}
 
