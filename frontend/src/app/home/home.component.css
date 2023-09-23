@@ -100,7 +100,11 @@ button {
   transform: translate(-150%, -150%);
 }
 
-.formats{
+.params{
+  margin-top:2rem;
+}
+
+.selector{
   display:flex;
   flex-direction: row;
   justify-content: center;
@@ -121,6 +125,25 @@ button {
   color:rgb(126, 126, 126);
 }
 
+.quality{
+  font-family: 'Archivo Black', sans-serif;
+  font-size:25px;
+  cursor: pointer;
+}
+
+.quality-active{
+  color:rgb(92, 255, 179);
+}
+
+.quality-deactive{
+  color:rgb(126, 126, 126);
+}
+
+.quality-unavailable{
+  cursor:default;
+  color:#3b3b3b;
+}
+
 .messages{
   width:100%;
   text-align: center;
@@ -138,10 +161,9 @@ button {
 }
 
 /* card */
-
 .card {
   box-sizing: border-box;
-  margin-top:10%;
+  margin-top:5%;
   width:40%;
   height: 20%;
   background: #212121;
@@ -219,7 +241,7 @@ button {
     width: 270px;
   }
 
-  .formats{
+  .selector{
     flex-direction: column;
     justify-content: center;
     align-items: center;

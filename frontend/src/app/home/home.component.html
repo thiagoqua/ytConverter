@@ -6,18 +6,34 @@
     </button>
     <span *ngIf="isLoading()" class="loader"></span>
   </div>
-  <div class="formats">
-    <h1
-      class="format"
-      *ngFor="let format of availableFormats"
-      (click)="formatSelected = format"
-      [ngClass]="{
-        'format-active': format == formatSelected,
-        'format-deactive': format != formatSelected
-      }"
-    >
-      {{ format.toUpperCase() }}
-    </h1>
+  <div class="params">
+    <div class="selector">
+      <h2
+        class="quality"
+        *ngFor="let quality of availableQualities"
+        (click)="qualitySelected = quality"
+        [ngClass]="{
+          'quality-active': quality == qualitySelected,
+          'quality-deactive': quality != qualitySelected,
+          'quality-unavailable': formatSelected == 'wav'
+        }"
+      >
+        {{ quality.toUpperCase() }}
+      </h2>
+    </div>
+    <div class="selector">
+      <h1
+        class="format"
+        *ngFor="let format of availableFormats"
+        (click)="formatSelected = format"
+        [ngClass]="{
+          'format-active': format == formatSelected,
+          'format-deactive': format != formatSelected
+        }"
+      >
+        {{ format.toUpperCase() }}
+      </h1>
+    </div>
   </div>
   <div class="messages">
     <h1 class="error-msg" *ngIf="error()">{{ error() }}</h1>
