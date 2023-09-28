@@ -3,7 +3,7 @@ import ytdl from "ytdl-core";
 const availableFormats = ['mp3','wav'];
 const availableQualities = ['low','medium','high'];
 
-export function ensureValidParams(url,format,quality){
+export function ensureValidParams(url:string,format:string,quality:string){
   if (!url) 
     throw new Error("Youtube URL inválida");
 

@@ -1,4 +1,4 @@
-export default function getQualityAsBitrate(quality){
+export default function getQualityAsBitrate(quality:string){
   let bitRate;
   if(quality === 'low')
     bitRate = 96;

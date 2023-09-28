@@ -1,5 +1,5 @@
 import express from "express";
-import { downloadRouter } from "./routes/download.js";
+import { downloadRouter } from "./routes/download";
 import cors from "cors";
 
 const app = express();
@@ -13,7 +13,7 @@ app.use(cors({
       'https://youtconverter.netlify.app/'
     ]
 
-    if(ACCEPTED_ORIGINS.includes(origin))
+    if(origin && ACCEPTED_ORIGINS.includes(origin))
       return callback(null,true);
 
     return callback(new Error('NOT ALLOWED BY CORS'));

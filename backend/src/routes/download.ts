@@ -1,14 +1,18 @@
 import { Router } from "express";
 import ytdl from "ytdl-core";
 import ffmpeg from "fluent-ffmpeg";
-import getEncodedFilename from "../utils/URLhelper.js";
-import getQualityAsBitrate from "../utils/qualityResolver.js";
-import { ensureValidParams } from "../utils/paramsValidator.js";
+import getEncodedFilename from "../utils/URLhelper";
+import getQualityAsBitrate from "../utils/qualityResolver";
+import { ensureValidParams } from "../utils/paramsValidator";
 
 export const downloadRouter = Router();
 
 downloadRouter.get("/", async (req, res) => {
-  const { url, format, quality } = req.query;
+  const { url, format, quality } = req.query as {
+    url:string,
+    format:string,
+    quality:string
+  };
 
   try {
     ensureValidParams(url, format, quality);
@@ -35,7 +39,7 @@ downloadRouter.get("/", async (req, res) => {
         else res.end();
       })
       .pipe(res, { end: true });
-  } catch (err) {
+  } catch (err:any) {
     res.status(400).json({ message: err.message }).send();
   }
 });
