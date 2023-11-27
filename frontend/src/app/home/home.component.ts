@@ -51,7 +51,7 @@ export class HomeComponent {
             };
             reader.readAsText(res.error);
           } else {
-            this.error.set("Ha ocurrido un error. Comuníquese con Tiki.");
+            this.error.set("Ha ocurrido un error. Comuníquese con el desarrollador.");
           }
           this.isLoading.set(false);
         }

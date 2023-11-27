@@ -1,9 +1,37 @@
 main {
   width: 100%;
-  height: 100vh;
+  height: 80vh;
   display: flex;
   flex-direction: column;
   align-items: center;
+}
+
+footer {
+  width:100%;
+  height: 15vh;
+  display:flex;
+  flex-direction: column;
+  align-items: end;
+  font-family: "Mooli", sans-serif;
+  font-weight: 800;
+  color: #e8e8e8;
+}
+
+a {
+  text-decoration: none;
+  color:#23d5ab;
+  font-size: 2rem;
+  background: linear-gradient(-45deg, #ee7752, #e73c7e, #23a6d5, #23d5ab);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-size: 500% auto;
+  animation: gradient 5s ease-in-out infinite alternate;
+}
+
+p {
+  font-size: 1rem;
+  color:#aaaaaa;
 }
 
 .url-input {
@@ -122,7 +150,7 @@ main {
 
 .error-msg {
   font-family: "Archivo Black", sans-serif;
-  background: linear-gradient(-45deg, #ee7752, #e73c7e, #23a6d5, #23d5ab);
+  background: linear-gradient(-45deg, #ee7752, #e73c7e, #8d8d8d, rgb(241, 255, 115));
   font-size: 100px;
   -webkit-background-clip: text;
   background-clip: text;
@@ -131,47 +159,11 @@ main {
   animation: gradient 5s ease-in-out infinite alternate;
 }
 
-/* card */
-.card {
-  box-sizing: border-box;
-  margin-top: 5%;
-  width: 40%;
-  height: 20%;
-  background: #212121;
-  border: 1px solid white;
-  box-shadow: 12px 17px 51px rgba(0, 0, 0, 0.22);
-  backdrop-filter: blur(6px);
-  border-radius: 17px;
-  text-align: center;
-  cursor: pointer;
-  transition: all 0.5s;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  user-select: none;
-  font-weight: bolder;
-  color: black;
-  box-shadow: 0px 0px 30px 1px rgba(0, 255, 117, 0.3);
-}
-
-.card:hover {
-  border: 1px solid black;
-  transform: scale(1.05);
-}
-
-.card:active {
-  transform: scale(0.95) rotateZ(1.7deg);
-}
-
-.card h1,
-.card p {
-  font-family: "Mooli", sans-serif;
-  font-weight: 800;
-  color: #e8e8e8;
-}
-
 @media (max-width: 740px) {
+  footer{
+    align-items: center;
+  }
+
   .url-input {
     flex-direction: column;
     align-items: center;
@@ -181,7 +173,7 @@ main {
 
   .url-input button {
     width: 30%;
-    height: 20%;
+    height: 2.5rem;
   }
 
   .url-input input {
@@ -190,16 +182,6 @@ main {
 
   .error-msg {
     font-size: 10vw;
-  }
-
-  .card {
-    width: 60%;
-  }
-}
-
-@media (max-width: 550px) {
-  .card {
-    width: 90%;
   }
 }
 
@@ -219,11 +201,6 @@ main {
     justify-content: center;
     align-items: center;
     gap: 0;
-  }
-
-  .card h1,
-  .card p {
-    font-size: 5vw;
   }
 }
 
