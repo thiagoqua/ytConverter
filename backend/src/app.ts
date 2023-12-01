@@ -1,6 +1,7 @@
 import express from "express";
 import { downloadRouter } from "./routes/download";
 import cors from "cors";
+import { wakeupRouter } from "./routes/wakeup";
 
 const app = express();
 const PORT = process.env.PORT ?? 8080;
@@ -12,7 +13,7 @@ app.use(cors({
       'https://youtconverter.netlify.app',
       'https://youtconverter.netlify.app/'
     ]
-
+    
     if(origin && ACCEPTED_ORIGINS.includes(origin))
       return callback(null,true);
 
@@ -20,7 +21,10 @@ app.use(cors({
   },
   exposedHeaders: "Content-Disposition"
 }));
+
+// paths
 app.use('/download',downloadRouter);
+app.use('/wakeup',wakeupRouter);
 
 app.listen(PORT,() => {
   console.log(`server started on http://localhost:${PORT}`);
