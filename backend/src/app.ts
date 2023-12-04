@@ -12,7 +12,7 @@ app.use(cors({
       'http://localhost:4200',
       'https://youtconverter.netlify.app',
       'https://youtconverter.netlify.app/',
-      'https://visionary-kheer-4c957e.netlify.app/'     //wake up alarm
+      'https://notifier-app.netlify.app'     //wake up alarm
     ]
     
     if(origin && ACCEPTED_ORIGINS.includes(origin))
