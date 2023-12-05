@@ -12,7 +12,7 @@ app.use(cors({
       'http://localhost:4200',
       'https://youtconverter.netlify.app',
       'https://youtconverter.netlify.app/',
-      'https://notifier-app.netlify.app'     //wake up alarm
+      'https://wake-up-alarm.onrender.com'     //wake up alarm
     ]
     
     if(origin && ACCEPTED_ORIGINS.includes(origin))
