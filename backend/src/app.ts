@@ -2,7 +2,6 @@ import express from "express";
 import { downloadRouter } from "./routes/download";
 import cors from "cors";
 import { wakeupRouter } from "./routes/wakeup";
-import cron from "node-cron";
 import { fetchWelcome } from "./utils/fetchWelcome";
 
 const app = express();
@@ -32,4 +31,4 @@ app.listen(PORT, () => {
 });
 
 //to wake up the app in intervals of 20 hours
-cron.schedule('0 * */20 * * *',fetchWelcome);
+setInterval(fetchWelcome,72000000);
