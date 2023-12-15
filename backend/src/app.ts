@@ -30,5 +30,5 @@ app.listen(PORT, () => {
   console.log(`server started on http://localhost:${PORT}`);
 });
 
-//to wake up the app in intervals of 20 hours
-setInterval(fetchWelcome,72000000);
+//to wake up the app in 1 hour interval
+setInterval(fetchWelcome,3600000);
