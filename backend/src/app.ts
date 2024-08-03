@@ -6,25 +6,9 @@ import { fetchWelcome } from "./utils/fetchWelcome";
 
 const app = express();
 const PORT = process.env.PORT ?? 8080;
-const corsRules = {
-  origin: (origin: any, callback: any) => {
-    const ACCEPTED_ORIGINS = [
-      "http://localhost",
-      "https://youtconverter.netlify.app",
-      "https://youtconverter.netlify.app/",
-    ];
-
-    if (origin && ACCEPTED_ORIGINS.includes(origin))
-      return callback(null, true);
-
-    return callback(new Error("NOT ALLOWED BY CORS"));
-  },
-  exposedHeaders: "Content-Disposition",
-};
-
 // paths
 app.use("/wakeup", cors(), wakeupRouter);
-app.use("/download",cors(corsRules), downloadRouter);
+app.use("/download",cors(), downloadRouter);
 
 app.listen(PORT, () => {
   console.log(`server started on http://localhost:${PORT}`);
