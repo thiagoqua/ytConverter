@@ -1,4 +1,4 @@
-import ytdl from "ytdl-core";
+import ytdl from "@distube/ytdl-core";
 
 const availableFormats = ['mp3','wav'];
 const availableQualities = ['low','medium','high'];
