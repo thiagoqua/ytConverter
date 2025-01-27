@@ -7,7 +7,7 @@ import { environment } from 'src/environments/environment';
   providedIn: 'root',
 })
 export class DownloadService {
-  private backendURL: string = 'yt-converter-azure.vercel.app';
+  private backendURL: string = 'https://ytconverter-33k5.onrender.com';
   private queryQualities: any = {
     'baja': 'low',
     'media': 'medium',
