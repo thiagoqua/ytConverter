@@ -32,7 +32,7 @@ downloadRouter.get("/", async (req, res) => {
     });
 
     const fileName = getEncodedFilename(`${videoTitle.trim()}.${format}`);
-    res.header("Content-Disposition", `attachment;filename=${fileName}`);
+    res.header("Content-Disposition", `attachment; filename="${fileName}"`);
 
     // Step 2: spawn yt-dlp to extract audio and stream it directly to the response.
     // -x            → extract audio only

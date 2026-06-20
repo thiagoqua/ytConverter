@@ -8,7 +8,7 @@ const app = express();
 const PORT = process.env.PORT ?? 8080;
 // paths
 app.use("/wakeup", cors(), wakeupRouter);
-app.use("/download",cors(), downloadRouter);
+app.use("/download", cors({ exposedHeaders: ['Content-Disposition'] }), downloadRouter);
 
 app.listen(PORT, () => {
   console.log(`server started on http://localhost:${PORT}`);

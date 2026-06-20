@@ -26,9 +26,13 @@ export class HomeComponent {
     this.service.download(this.url.value!,this.formatSelected,this.qualitySelected)
       .subscribe({
         next:(res:any) => {
-          const fileName = decodeURIComponent(
-            res.headers.get('content-disposition')?.split(';')[1].split('=')[1]
-          );
+          let fileName = res.headers.get('content-disposition')?.split(';')[1].split('=')[1];
+          if (fileName) {
+            fileName = fileName.replace(/^"|"$/g, '');
+            fileName = decodeURIComponent(fileName);
+          } else {
+            fileName = 'descarga.mp3';
+          }
           const file:Blob = res.body as Blob;
           const url:string = window.URL.createObjectURL(file);
           const a = document.createElement('a');
