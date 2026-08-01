@@ -1,24 +1,113 @@
-# App Overview
-Welcome to our **YouTube-to-Audio converter**, a web application built using Angular and Express. This platform provides an intuitive solution for users aiming to extract high-quality audio from their favorite YouTube videos. With a simple design, our application ensures fast conversions and is optimized for use across various devices. We prioritize both audio quality and user data security, ensuring efficient processing without storing any user data post-conversion.
-<br/>
+<div align="center">
 
-# Supported Formats for Download
-The hosted version of this application supports downloading YouTube videos in both **MP3** or **WAV** formats.
+# 🎵 ytConverter
 
-## About FFmpeg
-FFmpeg is a comprehensive multimedia processing tool that can read audio and video in various formats, process them, and produce output in desired formats. It's widely used for tasks such as converting and streaming audio and video.
-<br/>
+**Convertidor de YouTube a Audio MP3 y WAV**
 
-I use this library when the user wants to convert the YouTube video to WAV file, passing it the bit stream returned by the `ytdl-core library`.
+Una aplicación web moderna, rápida y minimalista para extraer audio de videos de YouTube en alta calidad con un solo clic.
 
-### Note on using FFmpeg
-While the Docker container provides an environment for downloading in WAV format using FFmpeg, it's crucial to note that if you're attempting to run the application outside of this container, **FFmpeg must be installed and accessible in your system's PATH**. The application depends on FFmpeg for WAV conversions, and without it, this functionality will not work.
+[![Angular](https://img.shields.io/badge/Angular-DD0031?style=for-the-badge&logo=angular&logoColor=white)](https://angular.io/)
+[![Express](https://img.shields.io/badge/Express.js-000000?style=for-the-badge&logo=express&logoColor=white)](https://expressjs.com/)
+[![TypeScript](https://img.shields.io/badge/TypeScript-3178C6?style=for-the-badge&logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
+[![Docker](https://img.shields.io/badge/Docker-2496ED?style=for-the-badge&logo=docker&logoColor=white)](https://www.docker.com/)
+[![FFmpeg](https://img.shields.io/badge/FFmpeg-007808?style=for-the-badge&logo=ffmpeg&logoColor=white)](https://ffmpeg.org/)
 
-# Running project locally
-## Backend with Docker
-1. Go to the backend dir and build the container: `docker build . -t backend:test`.
-2. Run the container: `docker run -p 8080:8080 --name backend -d backend:test`
+</div>
 
-## Frontend with Node
-1. Go to the frontend dir and install the node dependencies: `npm install`
-2. Run the app: `ng serve`
+---
+
+## ✨ Características Principales
+
+* 🎶 **Formatos de Alta Calidad**: Descargas en **MP3** (con selección de calidad baja, media y alta) o **WAV** (audio sin pérdida).
+* 🎨 **Diseño Cyber-Minimalista**: Interfaz responsiva con diseño glassmorphic, luces neón y animaciones fluidas.
+* ⚡ **Procesamiento Eficiente**: Uso de archivos temporales optimizados con `yt-dlp` y `ffmpeg` para evitar descargas corruptas o de 0 bytes.
+* 🛡️ **Prevención Anti-Bot & Datacenters**: Soporte integrado para prevención de bloqueos mediante cookies y proxies.
+* 🔒 **Privacidad Garantizada**: Procesamiento directo sin almacenamiento permanente de datos ni historial de usuario.
+
+---
+
+## 🛠️ Tecnologías
+
+### Frontend
+- **Framework**: Angular 16+
+- **Estilos**: CSS3 con Variables Nativas y Glassmorphism
+- **Tipografías**: Outfit & Plus Jakarta Sans (Google Fonts)
+
+### Backend
+- **Runtime**: Node.js + TypeScript
+- **Servidor HTTP**: Express.js
+- **Motor de Conversión**: `yt-dlp` + `FFmpeg`
+
+---
+
+## 🚀 Ejecución en Local
+
+### 1. Usando Docker Compose *(Recomendado)*
+
+La forma más rápida de ejecutar la aplicación completa (Frontend + Backend) en un entorno listo con `ffmpeg` y `yt-dlp`:
+
+```bash
+# Clonar el repositorio
+git clone https://github.com/thiagoqua/ytConverter.git
+cd ytConverter
+
+# Construir y levantar los contenedores
+docker compose up --build
+```
+
+Una vez iniciado, accede a:
+* **Frontend**: `http://localhost:4200`
+* **Backend API**: `http://localhost:8080`
+
+---
+
+### 2. Ejecución Manual (Sin Docker)
+
+#### Requisitos Previos:
+1. Tener [Node.js](https://nodejs.org/) (v18+) instalado.
+2. Tener **FFmpeg** instalado y accesible en el `PATH` del sistema.
+3. Tener **`yt-dlp`** instalado en el sistema.
+
+#### Paso A: Levantar el Backend
+```bash
+cd backend
+npm install
+npm run dev
+```
+*El backend se iniciará en `http://localhost:8080`.*
+
+#### Paso B: Levantar el Frontend
+```bash
+cd frontend
+npm install
+ng serve
+```
+*El frontend estará disponible en `http://localhost:4200`.*
+
+---
+
+## ⚙️ Variables de Entorno (Backend)
+
+El backend soporta las siguientes variables de entorno opcionales para despliegue y prevención de bloqueos:
+
+| Variable | Descripción | Ejemplo |
+| :--- | :--- | :--- |
+| `PORT` | Puerto donde escucha la aplicación Express | `8080` |
+| `YT_COOKIES` | Contenido en texto de un archivo `cookies.txt` para autenticación en YouTube | `# Netscape HTTP Cookie File...` |
+| `YT_COOKIES_PATH` | Ruta local absoluta hacia un archivo `cookies.txt` | `/app/cookies.txt` |
+| `YT_PROXY` | Servidor proxy HTTP/SOCKS5 para enrutar las peticiones de `yt-dlp` | `http://127.0.0.1:8080` |
+
+---
+
+## 👤 Autor
+
+Desarrollado con ❤️ por **Thiago Quaglia**
+
+* 🌐 **Sitio Web**: [thiagoqua.ar](https://thiagoqua.ar)
+* 🐙 **GitHub**: [@thiagoqua](https://github.com/thiagoqua)
+
+---
+
+## 📄 Licencia
+
+Este proyecto está bajo la Licencia [ISC](LICENSE).
