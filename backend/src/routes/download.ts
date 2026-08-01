@@ -33,13 +33,10 @@ const getCookiesFilePath = (): string | null => {
   return null;
 };
 
-// Extra arguments for yt-dlp to bypass YouTube bot detection / player restrictions in cloud datacenters
+// Extra arguments for yt-dlp
 const getBaseYtDlpArgs = (): string[] => {
   const args: string[] = [
     "--no-playlist",
-    // 'tv_embedded' and 'android_creator' bypass HTTP 429 and "Sign in to confirm you're not a bot" on cloud datacenter IPs
-    "--extractor-args", "youtube:player_client=tv_embedded,android_creator,ios,mweb",
-    "--user-agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
   ];
 
   const cookiesPath = getCookiesFilePath();
