@@ -9,16 +9,22 @@ import { DownloadService } from 'src/services/download.service';
   styleUrls: ['./home.component.css']
 })
 export class HomeComponent {
-  availableFormats:string[] = ['mp3','wav'];
-  formatSelected:string = this.availableFormats[0];
-  availableQualities:string[] = ['baja','media','alta'];
-  qualitySelected:string = this.availableQualities[1];
-  
+  availableFormats: string[] = ['mp3', 'wav'];
+  formatSelected: string = this.availableFormats[0];
+  availableQualities: string[] = ['baja', 'media', 'alta'];
+  qualitySelected: string = this.availableQualities[1];
+  currentYear: number = new Date().getFullYear();
+
   url = new FormControl('');
-  error = signal<string|undefined>(undefined);
+  error = signal<string | undefined>(undefined);
   isLoading = signal<boolean>(false);
 
-  constructor(private service:DownloadService){}
+  constructor(private service: DownloadService) {}
+
+  clearUrl(): void {
+    this.url.setValue('');
+    this.error.set(undefined);
+  }
 
   convert():void{
     this.error.set(undefined);

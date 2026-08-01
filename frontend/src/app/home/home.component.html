@@ -1,73 +1,126 @@
 <div class="page-wrapper">
+  <!-- Glowing Background Mesh Orbs -->
+  <div class="glow-orb orb-1"></div>
+  <div class="glow-orb orb-2"></div>
+
   <header class="app-header">
-    <span class="logo-text">ytConverter</span>
+    <div class="brand">
+      <div class="brand-icon">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+          <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 14.5v-9l6 4.5-6 4.5z"/>
+        </svg>
+      </div>
+      <span class="brand-name">ytConverter</span>
+    </div>
   </header>
 
-  <main>
-    <div class="card">
-      <div class="url-input">
-        <input
-          type="url"
-          [formControl]="url"
-          placeholder="Paste a YouTube URL…"
-          autocomplete="off"
-          spellcheck="false"
-        />
-      </div>
+  <main class="main-content">
+    <div class="hero">
+      <h1 class="hero-title">Convierte YouTube a Audio</h1>
+      <p class="hero-subtitle">Música y audio en MP3 o WAV al instante. Sin límites y con máxima velocidad.</p>
+    </div>
 
-      <div class="params">
-        <div class="selector">
-          <h1
-            class="format"
-            *ngFor="let format of availableFormats"
-            (click)="formatSelected = format"
-            [ngClass]="{
-              'format-active': format == formatSelected,
-              'format-deactive': format != formatSelected
-            }"
-          >
-            {{ format.toUpperCase() }}
-          </h1>
-        </div>
-
-        <div class="selector">
-          <h2
-            class="quality"
-            *ngFor="let quality of availableQualities"
-            (click)="qualitySelected = quality"
-            [ngClass]="{
-              'quality-active': quality == qualitySelected,
-              'quality-deactive': quality != qualitySelected,
-              'quality-unavailable': formatSelected == 'wav'
-            }"
-          >
-            {{ quality.toUpperCase() }}
-          </h2>
+    <div class="glass-card">
+      <!-- Input Field -->
+      <div class="input-section">
+        <div class="input-container" [class.focused]="url.value">
+          <div class="input-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" />
+            </svg>
+          </div>
+          <input
+            type="url"
+            [formControl]="url"
+            placeholder="Pega el enlace de YouTube aquí..."
+            autocomplete="off"
+            spellcheck="false"
+          />
+          <button *ngIf="url.value" (click)="clearUrl()" class="clear-btn" type="button" title="Limpiar URL">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+              <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd" />
+            </svg>
+          </button>
         </div>
       </div>
 
-      <div class="action">
+      <!-- Option Selectors -->
+      <div class="options-container">
+        <!-- Formats -->
+        <div class="option-group">
+          <label class="group-label">Formato</label>
+          <div class="pill-selector">
+            <button
+              *ngFor="let format of availableFormats"
+              type="button"
+              class="pill-btn"
+              [class.active]="format === formatSelected"
+              (click)="formatSelected = format"
+            >
+              {{ format.toUpperCase() }}
+            </button>
+          </div>
+        </div>
+
+        <!-- Qualities -->
+        <div class="option-group">
+          <div class="label-row">
+            <label class="group-label">Calidad</label>
+            <span *ngIf="formatSelected === 'wav'" class="wav-badge">Sin pérdida</span>
+          </div>
+          <div class="pill-selector" [class.disabled]="formatSelected === 'wav'">
+            <button
+              *ngFor="let quality of availableQualities"
+              type="button"
+              class="pill-btn"
+              [class.active]="quality === qualitySelected && formatSelected !== 'wav'"
+              [disabled]="formatSelected === 'wav'"
+              (click)="qualitySelected = quality"
+            >
+              {{ quality | titlecase }}
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Action Button -->
+      <div class="action-section">
         <button
           *ngIf="!isLoading()"
           (click)="convert()"
-          class="convert_button"
+          class="convert-button"
           [disabled]="!url.value"
+          type="button"
         >
-          convert
+          <span>Convertir Audio</span>
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+          </svg>
         </button>
-        <span *ngIf="isLoading()" class="loader">
-          <span class="loader1"></span>
-        </span>
-      </div>
-    </div>
 
-    <div class="messages">
-      <p class="error-msg" *ngIf="error()">{{ error() }}</p>
+        <div *ngIf="isLoading()" class="loader-box">
+          <div class="ring-spinner"></div>
+          <span>Procesando audio...</span>
+        </div>
+      </div>
+
+      <!-- Error Alert -->
+      <div *ngIf="error()" class="alert-box">
+        <svg class="alert-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+          <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd" />
+        </svg>
+        <span>{{ error() }}</span>
+      </div>
     </div>
   </main>
 
-  <footer>
-    <a href="https://thiagoqua.ar" target="_blank">Thiago Quaglia</a>
-    <p>Todos los derechos reservados</p>
+  <footer class="app-footer">
+    <div class="footer-inner">
+      <a href="https://thiagoqua.ar" target="_blank" rel="noopener" class="author-link">
+        Desarrollado por <span>Thiago Quaglia</span>
+      </a>
+      <span class="footer-copy">© {{ currentYear }} ytConverter. Todos los derechos reservados.</span>
+    </div>
   </footer>
 </div>
+
