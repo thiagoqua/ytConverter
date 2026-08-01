@@ -37,9 +37,9 @@ const getCookiesFilePath = (): string | null => {
 const getBaseYtDlpArgs = (): string[] => {
   const args: string[] = [
     "--no-playlist",
-    // 'ios,mweb' client bypasses the "Sign in to confirm you're not a bot" restriction on datacenter IPs
-    "--extractor-args", "youtube:player_client=ios,mweb",
-    "--user-agent", "Mozilla/5.0 (iPhone; CPU iPhone OS 17_5 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.5 Mobile/15E148 Safari/604.1",
+    // 'tv_embedded' and 'android_creator' bypass HTTP 429 and "Sign in to confirm you're not a bot" on cloud datacenter IPs
+    "--extractor-args", "youtube:player_client=tv_embedded,android_creator,ios,mweb",
+    "--user-agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
   ];
 
   const cookiesPath = getCookiesFilePath();
