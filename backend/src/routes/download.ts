@@ -9,17 +9,45 @@ import { ensureValidParams } from "../utils/paramsValidator";
 
 export const downloadRouter = Router();
 
+// Helper to resolve cookies file from YT_COOKIES_PATH or YT_COOKIES environment variable
+const getCookiesFilePath = (): string | null => {
+  if (process.env.YT_COOKIES_PATH && fs.existsSync(process.env.YT_COOKIES_PATH)) {
+    return process.env.YT_COOKIES_PATH;
+  }
+
+  if (process.env.YT_COOKIES) {
+    try {
+      const cookiesTmpPath = path.join(os.tmpdir(), "yt_cookies.txt");
+      let content = process.env.YT_COOKIES;
+      // Decode base64 if not plain text Netscape format
+      if (!content.includes("youtube.com") && !content.includes("# Netscape")) {
+        content = Buffer.from(content, "base64").toString("utf-8");
+      }
+      fs.writeFileSync(cookiesTmpPath, content, "utf-8");
+      return cookiesTmpPath;
+    } catch (e) {
+      console.error("[COOKIES ENV ERROR]", e);
+    }
+  }
+
+  return null;
+};
+
 // Extra arguments for yt-dlp to bypass YouTube bot detection / player restrictions in cloud datacenters
 const getBaseYtDlpArgs = (): string[] => {
   const args: string[] = [
     "--no-playlist",
-    "--extractor-args", "youtube:player_client=android,web",
-    "--user-agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
+    // 'ios,mweb' client bypasses the "Sign in to confirm you're not a bot" restriction on datacenter IPs
+    "--extractor-args", "youtube:player_client=ios,mweb",
+    "--user-agent", "Mozilla/5.0 (iPhone; CPU iPhone OS 17_5 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.5 Mobile/15E148 Safari/604.1",
   ];
 
-  if (process.env.YT_COOKIES_PATH) {
-    args.push("--cookies", process.env.YT_COOKIES_PATH);
+  const cookiesPath = getCookiesFilePath();
+  if (cookiesPath) {
+    console.log(`[COOKIES] Using cookies file: ${cookiesPath}`);
+    args.push("--cookies", cookiesPath);
   }
+
   if (process.env.YT_PROXY) {
     args.push("--proxy", process.env.YT_PROXY);
   }
