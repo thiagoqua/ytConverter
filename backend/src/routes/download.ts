@@ -1,5 +1,8 @@
 import { Router } from "express";
 import { spawn } from "child_process";
+import path from "path";
+import fs from "fs";
+import os from "os";
 import getEncodedFilename from "../utils/URLhelper";
 import getQualityAsBitrate from "../utils/qualityResolver";
 import { ensureValidParams } from "../utils/paramsValidator";
@@ -11,6 +14,7 @@ const getBaseYtDlpArgs = (): string[] => {
   const args: string[] = [
     "--no-playlist",
     "--extractor-args", "youtube:player_client=android,web",
+    "--user-agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
   ];
 
   if (process.env.YT_COOKIES_PATH) {
@@ -26,6 +30,7 @@ const getBaseYtDlpArgs = (): string[] => {
 const fetchVideoTitle = (url: string): Promise<string> => {
   return new Promise((resolve, reject) => {
     const args = [...getBaseYtDlpArgs(), "--print", "title", url];
+    console.log(`[TITLE FETCH] Spawning yt-dlp title process with args:`, args);
     const titleProcess = spawn("yt-dlp", args);
 
     let videoTitle = "";
@@ -41,15 +46,16 @@ const fetchVideoTitle = (url: string): Promise<string> => {
 
     titleProcess.on("close", (code) => {
       if (code === 0 && videoTitle.trim().length > 0) {
+        console.log(`[TITLE SUCCESS] Fetched title: "${videoTitle.trim()}"`);
         resolve(videoTitle.trim());
       } else {
-        console.error(`[yt-dlp title error] code ${code}: ${stderrLog}`);
+        console.error(`[TITLE ERROR] Exit code ${code}. Stderr: ${stderrLog.trim()}`);
         reject(new Error(stderrLog.trim() || "No se pudo obtener el título del video"));
       }
     });
 
     titleProcess.on("error", (err) => {
-      console.error("[yt-dlp title process error]", err);
+      console.error("[TITLE SPAWN ERROR]", err);
       reject(err);
     });
   });
@@ -62,62 +68,113 @@ downloadRouter.get("/", async (req, res) => {
     quality: string;
   };
 
+  console.log(`\n--- [DOWNLOAD REQUEST RECEIVED] ---`);
+  console.log(`URL: ${url} | Format: ${format} | Quality: ${quality}`);
+
   try {
     ensureValidParams(url, format, quality);
   } catch (err: any) {
+    console.error(`[VALIDATION ERROR] ${err.message}`);
     res.status(400).json({ message: err.message });
     return;
   }
 
+  // Create a unique temporary output file path to avoid FFmpeg non-seekable stdout pipe issues
+  const tempId = Date.now() + "_" + Math.random().toString(36).substring(2, 8);
+  const tempFilePath = path.join(os.tmpdir(), `yt_audio_${tempId}.${format}`);
+  console.log(`[TEMP FILE] Created path: ${tempFilePath}`);
+
   try {
-    // Step 1: fetch the video title. Fallback to a default name if YouTube blocks title metadata retrieval
+    // Step 1: fetch video title (fallback to "audio" if fails)
     let videoTitle = "audio";
     try {
       videoTitle = await fetchVideoTitle(url);
     } catch (err: any) {
-      console.warn(`[yt-dlp title fallback] Could not fetch title: ${err.message}. Using fallback title "audio".`);
+      console.warn(`[TITLE FALLBACK WARNING] Could not fetch title: ${err.message}. Using fallback name "audio".`);
     }
 
-    const fileName = getEncodedFilename(`${videoTitle}.${format}`);
-    res.header("Content-Disposition", `attachment; filename="${fileName}"`);
-
-    // Step 2: spawn yt-dlp to extract audio and stream it directly to response
+    // Step 2: Download & convert using yt-dlp to temp file
     const args = [
       "-x",
       "--audio-format", format,
       "--audio-quality", format === "mp3" ? getQualityAsBitrate(quality) : "0",
       ...getBaseYtDlpArgs(),
-      "-o", "-",
+      "-o", tempFilePath,
       url,
     ];
 
+    console.log(`[CONVERSION START] Spawning yt-dlp audio extraction with args:`, args);
     const ytdlp = spawn("yt-dlp", args);
-
     let ytdlpStderr = "";
-
-    ytdlp.stdout.pipe(res);
 
     ytdlp.stderr.on("data", (data) => {
       const msg = data.toString();
       ytdlpStderr += msg;
-      console.error(`[yt-dlp] ${msg}`);
+      console.log(`[yt-dlp log] ${msg.trim()}`);
     });
 
-    // If client disconnects mid-download, kill process
-    req.on("close", () => ytdlp.kill());
+    req.on("close", () => {
+      console.log(`[CLIENT DISCONNECTED] Killing process and cleaning up ${tempFilePath}`);
+      ytdlp.kill();
+      if (fs.existsSync(tempFilePath)) {
+        fs.unlink(tempFilePath, () => {});
+      }
+    });
 
-    ytdlp.on("close", (code) => {
-      if (code !== 0 && !res.headersSent) {
-        res.status(500).json({
-          message: ytdlpStderr.trim() || "Error al procesar el audio"
-        });
+    await new Promise<void>((resolve, reject) => {
+      ytdlp.on("close", (code) => {
+        const fileExists = fs.existsSync(tempFilePath);
+        const fileSize = fileExists ? fs.statSync(tempFilePath).size : 0;
+        console.log(`[CONVERSION FINISHED] Exit Code: ${code} | File Exists: ${fileExists} | Size: ${fileSize} bytes`);
+
+        if (code === 0 && fileExists && fileSize > 0) {
+          resolve();
+        } else {
+          reject(new Error(ytdlpStderr.trim() || `yt-dlp falló (código ${code}) sin generar archivo.`));
+        }
+      });
+      ytdlp.on("error", (err) => {
+        console.error("[CONVERSION SPAWN ERROR]", err);
+        reject(err);
+      });
+    });
+
+    // Step 3: Stream the verified non-empty file to response
+    const fileName = getEncodedFilename(`${videoTitle}.${format}`);
+    console.log(`[RESPONSE HEADERS] Setting Content-Disposition filename: "${fileName}"`);
+
+    res.header("Content-Disposition", `attachment; filename="${fileName}"`);
+    res.header("Content-Type", format === "mp3" ? "audio/mpeg" : "audio/wav");
+
+    const fileStream = fs.createReadStream(tempFilePath);
+    fileStream.pipe(res);
+
+    fileStream.on("end", () => {
+      console.log(`[STREAM COMPLETE] Download sent successfully. Removing temp file ${tempFilePath}`);
+      fs.unlink(tempFilePath, () => {});
+    });
+
+    fileStream.on("error", (err) => {
+      console.error("[FILE STREAM ERROR]", err);
+      if (fs.existsSync(tempFilePath)) {
+        fs.unlink(tempFilePath, () => {});
       }
     });
 
   } catch (err: any) {
+    // Clean up temp file on error
+    if (fs.existsSync(tempFilePath)) {
+      console.log(`[CLEANUP] Removing temp file ${tempFilePath} due to error`);
+      fs.unlink(tempFilePath, () => {});
+    }
     if (!res.headersSent) {
+      console.error(`[DOWNLOAD ROUTER ERROR] Sending HTTP 500:`, err.message);
       res.status(500).json({ message: err.message });
+    } else {
+      console.error(`[DOWNLOAD ROUTER ERROR AFTER HEADERS SENT]`, err.message);
     }
   }
 });
+
+
 
